@@ -21,7 +21,14 @@ export async function getItems(db: Firestore) {
     return itemsList;
 }
 
-export const items = [
+export interface Item {
+    type: string;
+    highPrice: number;
+    lowPrice: number;
+    name: string;
+}
+
+export const items: Item[] = [
     {
         highPrice: 6000000,
         type: "WATER_FEATURES",
