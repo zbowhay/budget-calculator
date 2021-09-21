@@ -5,17 +5,30 @@ import { Counter } from './features/counter/Counter';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
+
+interface Form1 {
+    budget: number;
+}
+
 function App() {
     const theme = useTheme();
 
     const [activeStep, setActiveStep] = useState(0);
+    const [form1, setForm1] = useState<Form1>({
+        budget: 0
+    });
 
     const handleNext = () => {
+        console.log(form1.budget);
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleChange = (prop: keyof Form1) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setForm1({ ...form1, [prop]: parseInt(event.target.value) || 0 });
     };
 
     return (
@@ -31,9 +44,11 @@ function App() {
                                 What's your budget?
                             </Typography>
                             <OutlinedInput
-                                error
                                 size="small"
+                                value={form1.budget}
+                                type="number"
                                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                onChange={handleChange('budget')}
                             />
                             <MobileStepper
                                 sx={{ margin: 'auto', marginTop: 5, bgcolor: 'background.paper', maxWidth: '250px' }}
