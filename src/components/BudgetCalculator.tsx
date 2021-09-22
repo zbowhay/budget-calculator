@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, MobileStepper, Button, useTheme } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-import { Item, items } from '../features/firebase/firebase';
+import firebase, { Item } from '../features/firebase/firebase';
 import BudgetForm from './BudgetForm';
 import BudgetSelections from './BudgetSelections';
 import BudgetSubmitted from './BudgetSubmitted';
@@ -25,14 +25,34 @@ interface Form {
 
 function BudgetCalculator() {
     const theme = useTheme();
+
     const [state, setState] = useState<State>({
         activeStep: 0,
-        items: items.map((i, index) => ({ ...i, checked: false, disabled: false, index })),
+        items: [],
         form: {
             budget: '',
             selections: []
         }
-    })
+    });
+
+    const mapItemToSelection = (item: Item, index: number) => ({
+        ...item,
+        checked: false,
+        disabled: false,
+        index
+    });
+
+    useEffect(() => {
+        (async () => {
+            console.log('firing request');
+            // query the database for items
+            const items = await firebase.simulateGetItems();
+            setState((prev) => ({
+                ...prev,
+                items: items.map(mapItemToSelection)
+            }));
+        })();
+    }, []);
 
     const handleNext = () => {
         setState((prev) => ({ ...prev, activeStep: prev.activeStep + 1}));
@@ -51,17 +71,17 @@ function BudgetCalculator() {
             }
         });
     };
-    
+
     const itemSelected = (selection: Selection) => () => {
         setState((prev) => {
             // toggle checkbox
             let { items } = prev;
             items[selection.index].checked = !items[selection.index].checked;
-            
+
             // update selections to be the checked items
             const selections = items.filter(i => i.checked);
             const disabledTypes = selections.map(s => s.type);
-            
+
             // disable all items whose type already exists in selections BUT is not in selections
             items = items.map(item => ({
                 ...item,

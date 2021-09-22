@@ -1,5 +1,4 @@
 import { Container, Grid } from '@mui/material';
-import { Counter } from './features/counter/Counter';
 import BudgetCalculator from './components/BudgetCalculator';
 
 
@@ -12,8 +11,6 @@ function App() {
                     <BudgetCalculator></BudgetCalculator>
                 </Grid>
             </Grid>
-            {/* In case I want to use redux, can use this as an example */}
-            {/* <Counter /> */}
         </Container>
     );
 }

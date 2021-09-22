@@ -1,8 +1,14 @@
-import { CardContent, CardHeader } from '@mui/material';
+import { CardContent, CardHeader, Typography } from '@mui/material';
 
 function BudgetSubmitted() {
     return (
-        <p>Budget Submitted</p>
+        <>
+        <CardHeader title={'Budget Submitted'}>
+        </CardHeader>
+        <CardContent>
+            <Typography variant="body2">Thanks!</Typography>
+        </CardContent>
+        </>
     );
 }
 
