@@ -17,9 +17,18 @@ export const db = getFirestore(app);
 export async function getItems(db: Firestore) {
     const itemsCol = collection(db, 'items');
     const itemsSnapshot = await getDocs(itemsCol);
-    const itemsList = itemsSnapshot.docs.map(doc => doc.data());
-    return itemsList;
+    const itemsList = itemsSnapshot.docs.map(doc => doc.data())
+    // dedupe
+    return itemsList.filter((item, index, self) =>
+        index === self.findIndex(i =>
+            (i.type === item.type && i.name === item.name)
+        )
+    );
 }
+
+// (async () => {
+//     console.log(await getItems(db));
+// })();
 
 export interface Item {
     type: string;
@@ -31,128 +40,98 @@ export interface Item {
 export const items: Item[] = [
     {
         highPrice: 6000000,
-        type: "WATER_FEATURES",
         lowPrice: 2000000,
-        name: "Fountain"
+        name: "Fountain",
+        type: "WATER_FEATURES"
     },
     {
         type: "STRUCTURES",
-        lowPrice: 200000,
+        highPrice: 600000,
         name: "Taj Mahal",
-        highPrice: 600000
+        lowPrice: 200000
     },
     {
-        name: "16+",
         lowPrice: 150000,
-        type: "LIGHTING",
-        highPrice: 3000000
+        name: "16+",
+        highPrice: 3000000,
+        type: "LIGHTING"
     },
     {
-        name: "Pool",
         lowPrice: 6000000,
+        name: "Pool",
         highPrice: 10000000,
         type: "WATER_FEATURES"
     },
     {
         highPrice: 800000,
-        name: "Pavers",
+        type: "GROUND_COVER",
         lowPrice: 400000,
-        type: "GROUND_COVER"
+        name: "Pavers"
     },
     {
-        lowPrice: 6000000,
-        type: "WATER_FEATURES",
-        highPrice: 10000000,
-        name: "Pool"
-    },
-    {
+        type: "DECK_MATERIAL",
         name: "Redwood",
         highPrice: 1400000,
-        type: "DECK_MATERIAL",
         lowPrice: 1200000
     },
     {
+        lowPrice: 300000,
         name: "Bamboo Shroud",
-        type: "FENCING_AND_PRIVACY",
         highPrice: 500000,
-        lowPrice: 300000
+        type: "FENCING_AND_PRIVACY"
     },
     {
-        name: "Redwood Fence",
+        lowPrice: 300000,
         type: "FENCING_AND_PRIVACY",
-        highPrice: 1000000,
-        lowPrice: 300000
+        name: "Redwood Fence",
+        highPrice: 1000000
     },
     {
+        name: "Composite",
         highPrice: 1200000,
         lowPrice: 400000,
-        type: "DECK_MATERIAL",
-        name: "Composite"
+        type: "DECK_MATERIAL"
     },
     {
-        highPrice: 100000,
         type: "LIGHTING",
         lowPrice: 50000,
-        name: "3-5"
+        name: "3-5",
+        highPrice: 100000
+    },
+    {
+        highPrice: 400000,
+        name: "Gravel",
+        lowPrice: 200000,
+        type: "GROUND_COVER"
     },
     {
         type: "GROUND_COVER",
-        highPrice: 400000,
-        name: "Gravel",
-        lowPrice: 200000
-    },
-    {
-        highPrice: 6000000,
-        type: "WATER_FEATURES",
-        name: "Fountain",
-        lowPrice: 2000000
-    },
-    {
-        highPrice: 600000,
-        name: "Turf",
         lowPrice: 200000,
-        type: "GROUND_COVER"
+        name: "Turf",
+        highPrice: 600000
     },
     {
         name: "Pergola",
         lowPrice: 1200000,
-        type: "STRUCTURES",
-        highPrice: 3000000
+        highPrice: 3000000,
+        type: "STRUCTURES"
     },
     {
-        type: "FENCING_AND_PRIVACY",
-        highPrice: 300000,
         lowPrice: 50000,
-        name: "Plywood Fence"
+        highPrice: 300000,
+        name: "Plywood Fence",
+        type: "FENCING_AND_PRIVACY"
     },
     {
-        name: "6-15",
+        lowPrice: 60000,
         type: "LIGHTING",
         highPrice: 150000,
-        lowPrice: 60000
+        name: "6-15"
     },
     {
-        name: "Gravel",
-        lowPrice: 200000,
-        type: "GROUND_COVER",
-        highPrice: 400000
-    },
-    {
-        lowPrice: 150000,
-        type: "LIGHTING",
-        highPrice: 3000000,
-        name: "16+"
-    },
-    {
-        name: "6-15",
-        type: "LIGHTING",
-        lowPrice: 60000,
-        highPrice: 150000
-    },
-    {
-        highPrice: 1200000,
-        type: "STRUCTURES",
         name: "Pirate Ship",
-        lowPrice: 400000
+        lowPrice: 400000,
+        type: "STRUCTURES",
+        highPrice: 1200000
     }
 ];
