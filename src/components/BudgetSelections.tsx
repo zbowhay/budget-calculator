@@ -24,20 +24,19 @@ function BudgetSelections(props: {
     const high = props.selections.reduce((prev, curr) => prev + curr.highPrice, 0) / 100;
     const budget = parseInt(props.budget);
     const status = (budget >= low && budget <= high) ? 'Gucci' :
-                    budget > high ? 'Over Budget!' :
-                    budget < low ? 'Under Budget!' : '';
+                    budget > high ? 'Under Budget!' :
+                    budget < low ? 'Over Budget!' : '';
 
     return (
         <>
             <CardHeader title={`What Are You Interested In?`}>
             </CardHeader>
-            <CardContent>
-                <List
-                    subheader={<li />}
-                >
+            <CardContent sx={{ textAlign: 'left' }}>
+                <List subheader={<li />}>
                     {Object.keys(list).map((type, i) => (
-                        <>
-                            <ListSubheader key={i}>{titleCase(type.split('_').join(' '))}</ListSubheader>
+                        <li key={i}>
+                            <ul>
+                            <ListSubheader>{titleCase(type.split('_').join(' '))}</ListSubheader>
                             {list[type].map((item, j) => (
                                 <ListItem key={`${i}-${j}`}>
                                     <ListItemButton
@@ -57,7 +56,8 @@ function BudgetSelections(props: {
                                     </ListItemButton>
                                 </ListItem>
                             ))}
-                        </>
+                            </ul>
+                        </li>
                     ))}
                 </List>
                 <Typography variant="subtitle1">
@@ -65,7 +65,7 @@ function BudgetSelections(props: {
                 </Typography>
                 <ul>
                     <li>Budget = {props.budget}</li>
-                    <li>Estimate = {`$${low / 100} - $${high / 100}`}</li>
+                    <li>Estimate = {`$${low} - $${high}`}</li>
                     <li>Status = {status}</li>
                 </ul>
             </CardContent>
