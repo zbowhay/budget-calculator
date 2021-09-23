@@ -2,6 +2,7 @@ import { CardContent, CardHeader, Typography, List, ListItem, ListSubheader } fr
 import { ListItemButton, ListItemIcon, ListItemText, Checkbox } from '@mui/material';
 import { titleCase } from '../common';
 import { Selection } from './BudgetCalculator';
+import BudgetSummary from './BudgetSummary';
 
 
 function BudgetSelections(props: {
@@ -19,14 +20,6 @@ function BudgetSelections(props: {
         list[type] = selections;
     });
 
-    // gather information for summary
-    const low = props.selections.reduce((prev, curr) => prev + curr.lowPrice, 0) / 100;
-    const high = props.selections.reduce((prev, curr) => prev + curr.highPrice, 0) / 100;
-    const budget = parseInt(props.budget);
-    const status = (budget >= low && budget <= high) ? 'Gucci' :
-                    budget > high ? 'Under Budget!' :
-                    budget < low ? 'Over Budget!' : '';
-
     return (
         <>
         <CardHeader title={`What Are You Interested In?`}>
@@ -37,10 +30,10 @@ function BudgetSelections(props: {
                 <List subheader={<li />}>
                     {Object.keys(list).map((type, i) => (
                         <li key={i}>
-                        <ul>
+                        <ul style={{ padding: 0}}>
                         <ListSubheader>{titleCase(type.split('_').join(' '))}</ListSubheader>
                         {list[type].map((item, j) => (
-                            <ListItem key={`${i}-${j}`}>
+                            <ListItem key={`${i}-${j}`} divider>
                                 <ListItemButton
                                     disabled={item.disabled}
                                     role={undefined}
@@ -62,14 +55,7 @@ function BudgetSelections(props: {
                         </li>
                     ))}
                 </List>
-                <Typography variant="subtitle1">
-                    Summary
-                </Typography>
-                <ul>
-                    <li>Budget = {props.budget}</li>
-                    <li>Estimate = {`$${low} - $${high}`}</li>
-                    <li>Status = {status}</li>
-                </ul>
+                <BudgetSummary budget={props.budget} selections={props.selections}></BudgetSummary>
             </CardContent>
         }
         </>

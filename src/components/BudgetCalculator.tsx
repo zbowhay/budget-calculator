@@ -15,13 +15,12 @@ export interface Selection extends Item {
 interface State {
     activeStep: number;
     items: Selection[];
-    form: Form
+    form: {
+        budget: string;
+        selections: Selection[]
+    }
 }
 
-interface Form {
-    budget: string;
-    selections: Selection[]
-}
 
 function BudgetCalculator() {
     const theme = useTheme();
@@ -35,21 +34,19 @@ function BudgetCalculator() {
         }
     });
 
-    const mapItemToSelection = (item: Item, index: number) => ({
-        ...item,
-        checked: false,
-        disabled: false,
-        index
-    });
 
     useEffect(() => {
         (async () => {
-            console.log('firing request');
             // query the database for items
             const items = await firebase.simulateGetItems();
             setState((prev) => ({
                 ...prev,
-                items: items.map(mapItemToSelection)
+                items: items.map((item, index) => ({
+                    ...item,
+                    checked: false,
+                    disabled: false,
+                    index
+                }))
             }));
         })();
     }, []);
@@ -62,12 +59,12 @@ function BudgetCalculator() {
         setState((prev) => ({ ...prev, activeStep: prev.activeStep - 1}));
     };
 
-    const handleChange = (prop: keyof Form) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleBudget = (event: React.ChangeEvent<HTMLInputElement>) => {
         setState({
             ...state,
             form: {
                 ...state.form,
-                ...{ [prop]: event.target.value }
+                budget: event.target.value
             }
         });
     };
@@ -101,10 +98,11 @@ function BudgetCalculator() {
     const renderFormStep = (activeStep: number) => {
         switch (activeStep) {
             case 0:
-                return <BudgetForm budget={state.form.budget} handleChange={handleChange}></BudgetForm>
+                return <BudgetForm budget={state.form.budget} handleBudget={handleBudget}></BudgetForm>
             case 1:
                 return <BudgetSelections items={state.items} selections={state.form.selections} itemSelected={itemSelected} budget={state.form.budget}></BudgetSelections>
             case 2:
+                // TODO: submit selections
                 return <BudgetSubmitted></BudgetSubmitted>
             default:
                 return <></>;
@@ -113,7 +111,9 @@ function BudgetCalculator() {
 
     return (
         <Card sx={{ margin: 'auto', width: '100%', border: 1, textAlign: 'center' }} elevation={5}>
-            {renderFormStep(state.activeStep)}
+
+            { renderFormStep(state.activeStep) }
+
             <MobileStepper
                 sx={{ margin: 'auto', marginTop: 3, bgcolor: 'background.paper', maxWidth: '250px' }}
                 variant="dots"
@@ -127,7 +127,7 @@ function BudgetCalculator() {
                     </Button>
                 }
                 backButton={
-                    <Button size="small" onClick={handleBack} disabled={state.activeStep === 0}>
+                    <Button size="small" onClick={handleBack} disabled={state.activeStep % 2 === 0}>
                         {theme.direction === 'rtl' ? ( <KeyboardArrowRight /> ) : ( <KeyboardArrowLeft /> )}
                         Back
                     </Button>

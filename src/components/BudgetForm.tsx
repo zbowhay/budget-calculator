@@ -1,6 +1,6 @@
 import { CardContent, CardHeader, OutlinedInput, InputAdornment, Typography } from '@mui/material';
 
-function BudgetForm(props: { budget: string; handleChange: any; }) {
+function BudgetForm(props: { budget: string; handleBudget: any; }) {
     return (
         <>
             <CardHeader title={`Let's Get Started!`}>
@@ -15,7 +15,7 @@ function BudgetForm(props: { budget: string; handleChange: any; }) {
                     value={props.budget}
                     type="number"
                     startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                    onChange={props.handleChange('budget')} />
+                    onChange={props.handleBudget} />
             </CardContent>
         </>
     );
