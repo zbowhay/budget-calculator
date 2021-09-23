@@ -16,23 +16,23 @@ function BudgetSummary(props: {
 
     return (
         <Grid container sx={{ textAlign: 'center', paddingTop: 2 }}>
-            <Grid item xs={4}>
+            <Grid item xs>
                 <Typography variant="subtitle1">
                     Budget
                 </Typography>
                 <Typography variant="subtitle2" color={grey[500]}>
-                    ${budget}
+                    ${budget.toLocaleString()}
                 </Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={6}>
                 <Typography variant="subtitle1">
                     Estimate
                 </Typography>
                 <Typography variant="subtitle2" color={grey[500]}>
-                    {`$${low} - $${high}`}
+                    {`$${low.toLocaleString()} - $${high.toLocaleString()}`}
                 </Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs>
                 <Typography variant="subtitle1">
                     Status
                 </Typography>

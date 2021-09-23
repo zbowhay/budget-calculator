@@ -47,7 +47,7 @@ function BudgetSelections(props: {
                                             disableRipple
                                         />
                                     </ListItemIcon>
-                                    <ListItemText primary={item.name} secondary={`$${item.lowPrice / 100} - $${item.highPrice / 100}`} />
+                                    <ListItemText primary={item.name} secondary={`$${(item.lowPrice / 100).toLocaleString()} - $${(item.highPrice / 100).toLocaleString()}`} />
                                 </ListItemButton>
                             </ListItem>
                         ))}

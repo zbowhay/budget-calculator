@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
     apiKey: "AIzaSyD7NUVfrImccSo8FuCBG7bXVk0oLFqgE-k",
@@ -18,10 +18,16 @@ export interface Item {
     name: string;
 }
 
+export interface BudgetSubmission {
+    budget: string;
+    items: Item[];
+}
+
 export class Firebase {
     app = initializeApp(firebaseConfig);
     db = getFirestore(this.app)
-    async getItems() {
+
+    async getItems(): Promise<Item[]> {
         const itemsCol = collection(this.db, 'items');
         const itemsSnapshot = await getDocs(itemsCol);
         const itemsList = itemsSnapshot.docs.map(doc => doc.data())
@@ -31,7 +37,20 @@ export class Firebase {
             index === self.findIndex(i =>
                 (i.type === item.type && i.name === item.name)
             )
-        );
+        ) as Item[];
+    }
+
+    async submitBudget(budgetSubmission: BudgetSubmission) {
+        const id = new Date().valueOf().toString();
+        await setDoc(doc(this.db, `zacharyBowhayBudgets/${id}`), budgetSubmission);
+    }
+
+    async getBudgets() {
+        const budgetsCol = collection(this.db, 'zacharyBowhayBudgets');
+        const budgetsSnapshot = await getDocs(budgetsCol);
+        const budgets = budgetsSnapshot.docs.map(doc => doc.data())
+
+        return budgets;
     }
 
     /**

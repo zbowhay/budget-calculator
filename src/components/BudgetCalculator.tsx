@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, MobileStepper, Button, useTheme } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-import firebase, { Item } from '../features/firebase/firebase';
+import firebase, { Item, BudgetSubmission } from '../features/firebase/firebase';
 import BudgetForm from './BudgetForm';
 import BudgetSelections from './BudgetSelections';
 import BudgetSubmitted from './BudgetSubmitted';
@@ -38,7 +38,7 @@ function BudgetCalculator() {
     useEffect(() => {
         (async () => {
             // query the database for items
-            const items = await firebase.simulateGetItems();
+            const items = await firebase.getItems();
             setState((prev) => ({
                 ...prev,
                 items: items.map((item, index) => ({
@@ -52,7 +52,14 @@ function BudgetCalculator() {
     }, []);
 
     const handleNext = () => {
-        setState((prev) => ({ ...prev, activeStep: prev.activeStep + 1}));
+        setState((prev) => {
+            const activeStep = prev.activeStep + 1;
+            if (activeStep === 2) {
+                handleSubmit();
+            }
+            
+            return { ...prev, activeStep };
+        });
     };
 
     const handleBack = () => {
@@ -95,6 +102,21 @@ function BudgetCalculator() {
         });
     };
 
+    const handleSubmit = () => {
+        const submission: BudgetSubmission = {
+            budget: state.form.budget,
+            items: state.form.selections.map(s => ({
+                type: s.type,
+                name: s.name,
+                lowPrice: s.lowPrice,
+                highPrice: s.highPrice
+            }))
+        }
+
+        firebase.submitBudget(submission)
+            .catch(err => console.error('Failed to submit budget!', err));
+    };
+
     const renderFormStep = (activeStep: number) => {
         switch (activeStep) {
             case 0:
@@ -102,7 +124,6 @@ function BudgetCalculator() {
             case 1:
                 return <BudgetSelections items={state.items} selections={state.form.selections} itemSelected={itemSelected} budget={state.form.budget}></BudgetSelections>
             case 2:
-                // TODO: submit selections
                 return <BudgetSubmitted></BudgetSubmitted>
             default:
                 return <></>;
